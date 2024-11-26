@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submissions - Finstreet Global Markets</title>
+    <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-50">
+    <div class="flex h-screen">
+        <!-- Sidebar (unchanged) -->
+        <div class="fixed inset-y-0 left-0 w-64 bg-indigo-700">
+            <div class="flex items-center justify-center h-16 px-4 bg-indigo-800">
+                <span class="text-xl font-semibold text-white">Admin Portal</span>
+            </div>
+            <nav class="px-4 mt-6 space-y-2">
+                <a href="/admin" class="flex items-center px-4 py-2 text-white hover:bg-indigo-600 rounded-lg">
+                    <i class="mr-3 fas fa-dashboard"></i>
+                    Dashboard
+                </a>
+                <a href="/admin/submissions" class="flex items-center px-4 py-2 text-white bg-indigo-800 rounded-lg">
+                    <i class="mr-3 fas fa-file-alt"></i>
+                    Submissions
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 ml-64">
+            <!-- Top Bar -->
+            <div class="h-16 bg-white shadow-sm">
+                <div class="flex items-center justify-between h-full px-6">
+                    <h1 class="text-2xl font-semibold text-gray-800">Submissions</h1>
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center space-x-2">
+                            <input type="text" placeholder="Search submissions..."
+                                class="px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                                hx-get="/admin/submissions" hx-trigger="keyup changed delay:500ms"
+                                hx-target="#submissions-table" name="search">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submissions List -->
+            <div class="p-6">
+                <div class="bg-white rounded-lg shadow">
+                    <!-- Filters -->
+                    <div class="p-4 border-b">
+                        <div class="flex items-center space-x-4">
+                            <select
+                                class="px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                                hx-get="/admin/submissions" hx-target="#submissions-table" name="status">
+                                <option value="">All Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="approved">Approved</option>
+                                <option value="rejected">Rejected</option>
+                            </select>
+
+                            <select
+                                class="px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                                hx-get="/admin/submissions" hx-target="#submissions-table" name="sort">
+                                <option value="submitted_at">Sort by Date</option>
+                                <option value="company_name">Sort by Company</option>
+                                <option value="status">Sort by Status</option>
+                                <option value="country">Sort by Country</option>
+                                <option value="security_type">Sort by Security Type</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Enhanced Table -->
+                    <div id="submissions-table" class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="text-left text-gray-500 border-b">
+                                    <th class="p-4">Company Information</th>
+                                    <th class="p-4">Security Details</th>
+                                    <th class="p-4">Share Capital</th>
+                                    <th class="p-4">Status & Timeline</th>
+                                    <th class="p-4">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{range .Data.Submissions}}
+                                <tr class="border-b hover:bg-gray-50">
+                                    <td class="p-4">
+                                        <div class="font-medium text-gray-800">{{.IssuerInfo.CompanyName}}</div>
+                                        <div class="text-sm text-gray-500">{{.IssuerInfo.TradeName}}</div>
+                                        <div class="mt-1 text-sm text-gray-600">
+                                            <span class="inline-flex items-center">
+                                                <i class="mr-1 fas fa-building"></i>
+                                                {{.IssuerInfo.Constitution}}
+                                            </span>
+                                            <span class="inline-flex items-center ml-3">
+                                                <i class="mr-1 fas fa-globe"></i>
+                                                {{.IssuerInfo.IncorporationDetails.Country}}
+                                            </span>
+                                        </div>
+                                        <div class="text-sm text-gray-500 mt-1">
+                                            <span title="Registration Number">
+                                                <i class="mr-1 fas fa-hashtag"></i>
+                                                {{.IssuerInfo.IncorporationDetails.RegNumber}}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td class="p-4">
+                                        <div class="text-sm">
+                                            <div class="font-medium text-gray-800">{{.SecuritiesInfo.Security.Type}}
+                                            </div>
+                                            <div class="text-gray-600">ISIN: {{.SecuritiesInfo.Security.ISIN}}</div>
+                                            <div class="text-gray-600">
+                                                Offered: {{.SecuritiesInfo.Security.NumSecurities}}
+                                            </div>
+                                            <div class="text-gray-600">
+                                                Market Cap: ${{formatMoney .SecuritiesInfo.Security.MarketCap}}M
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="p-4">
+                                        <div class="text-sm">
+                                            <div class="text-gray-600">
+                                                Authorized: ${{formatMoney
+                                                .SecuritiesInfo.ShareCapital.Authorized.Amount}}
+                                            </div>
+                                            <div class="text-gray-600">
+                                                Paid-up: ${{formatMoney .SecuritiesInfo.ShareCapital.PaidUp.Amount}}
+                                            </div>
+                                            <div class="text-gray-600">
+                                                <i class="mr-1 fas fa-exchange-alt"></i>
+                                                {{.SecuritiesInfo.Exchanges.Primary}}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="p-4">
+                                        <span class="px-2 py-1 text-sm rounded-full {{statusBadgeClass .Status}}">
+                                            {{.Status}}
+                                        </span>
+                                        <div class="mt-2 text-sm text-gray-500">
+                                            <div>
+                                                <i class="mr-1 fas fa-clock"></i>
+                                                {{formatDate .SubmittedAt}}
+                                            </div>
+                                            <div class="mt-1">
+                                                <i class="mr-1 fas fa-sync"></i>
+                                                {{formatDate .UpdatedAt}}
+                                            </div>
+                                        </div>
+                                        {{if gt (len .Notes) 0}}
+                                        <div class="mt-1 text-sm text-gray-500">
+                                            <i class="mr-1 fas fa-comment"></i>
+                                            {{len .Notes}} note(s)
+                                        </div>
+                                        {{end}}
+                                    </td>
+                                    <td class="p-4">
+                                        <div class="flex items-center space-x-3">
+                                            <a href="/admin/submission/{{.ID.Hex}}"
+                                                class="text-indigo-600 hover:text-indigo-800">
+                                                <i class="fas fa-eye"></i>
+                                                <span class="ml-1">View</span>
+                                            </a>
+                                            {{if eq .Status "pending"}}
+                                            <button class="text-green-600 hover:text-green-800"
+                                                hx-put="/admin/submission/{{.ID.Hex}}/status"
+                                                hx-vals='{"status": "approved"}'
+                                                hx-confirm="Are you sure you want to approve this submission?"
+                                                title="Approve">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                            <button class="text-red-600 hover:text-red-800"
+                                                hx-put="/admin/submission/{{.ID.Hex}}/status"
+                                                hx-vals='{"status": "rejected"}'
+                                                hx-confirm="Are you sure you want to reject this submission?"
+                                                title="Reject">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                            {{end}}
+                                            {{if gt (len .Documents) 0}}
+                                            <div class="relative" x-data="{ open: false }">
+                                                <button class="text-gray-600 hover:text-gray-800" @click="open = !open"
+                                                    title="View Documents">
+                                                    <i class="fas fa-folder"></i>
+                                                </button>
+                                                <div x-show="open" @click.away="open = false"
+                                                    class="absolute right-0 w-48 py-2 mt-2 bg-white rounded-md shadow-xl z-10">
+                                                    {{range .Documents}}
+                                                    <a href="/admin/document/{{.Path}}"
+                                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                                        {{.Name}}
+                                                    </a>
+                                                    {{end}}
+                                                </div>
+                                            </div>
+                                            {{end}}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {{end}}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="flex items-center justify-between p-4 border-t">
+                        <div class="text-sm text-gray-500">
+                            Showing page {{.Pagination.CurrentPage}} of {{.Pagination.TotalPages}}
+                        </div>
+                        <div class="flex space-x-2">
+                            {{if .Pagination.HasPrev}}
+                            <button class="px-3 py-1 text-sm text-gray-600 bg-gray-100 rounded hover:bg-gray-200"
+                                hx-get="/admin/submissions?page={{subtract .Pagination.CurrentPage 1}}&status={{.Filters.Status}}&search={{.Filters.Search}}&sort={{.Filters.Sort}}&order={{.Filters.Order}}"
+                                hx-target="#submissions-table">
+                                Previous
+                            </button>
+                            {{end}}
+
+                            {{if .Pagination.HasNext}}
+                            <button class="px-3 py-1 text-sm text-gray-600 bg-gray-100 rounded hover:bg-gray-200"
+                                hx-get="/admin/submissions?page={{add .Pagination.CurrentPage 1}}&status={{.Filters.Status}}&search={{.Filters.Search}}&sort={{.Filters.Sort}}&order={{.Filters.Order}}"
+                                hx-target="#submissions-table">
+                                Next
+                            </button>
+                            {{end}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

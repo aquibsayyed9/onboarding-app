@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin View</title>
+</head>
+<body>
+    <h1>Admin - Submissions</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Address</th>
+                <th>Submitted At</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .Submissions}}
+            <tr>
+                <td>{{.name}}</td>
+                <td>{{.address}}</td>
+                <td>{{.submittedAt}}</td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+</body>
+</html>

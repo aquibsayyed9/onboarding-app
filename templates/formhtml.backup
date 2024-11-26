@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admission to Trade Application</title>
+    <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Add icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto py-8 px-4 max-w-4xl">
+        <!-- Header with Logo -->
+        <div class="text-center mb-8">
+            <div class="flex justify-center mb-4">
+                <div class="w-16 h-16 bg-indigo-600 rounded flex items-center justify-center">
+                    <i class="fas fa-cube text-white text-2xl"></i>
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-800">FINSTREET GLOBAL MARKETS LIMITED</h1>
+            <p class="text-gray-600">Admission to Trade Application (Exempt Offers)</p>
+        </div>
+
+        <!-- Main Form -->
+        <div class="bg-white shadow-lg rounded-lg p-6">
+            <form hx-post="/submit" hx-swap="outerHTML" class="space-y-8">
+                <!-- A. Issuer Information Section -->
+                <div class="space-y-6">
+                    <h2 class="text-xl font-semibold text-gray-800 border-b pb-2">A. Issuer Information</h2>
+                    
+                    <div class="grid grid-cols-1 gap-6">
+                        <div>
+                            <label for="company_name" class="block text-sm font-medium text-gray-700">Name of the Issuer/Company Legal Name</label>
+                            <input type="text" id="company_name" name="company_name" required
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        </div>
+
+                        <div>
+                            <label for="trade_name" class="block text-sm font-medium text-gray-700">Trade Name (if different)</label>
+                            <input type="text" id="trade_name" name="trade_name"
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        </div>
+
+                        <div>
+                            <label for="constitution" class="block text-sm font-medium text-gray-700">Constitution</label>
+                            <select id="constitution" name="constitution" required
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                <option value="">Select type</option>
+                                <option value="private">Private Limited</option>
+                                <option value="public">Public</option>
+                                <option value="pjsc">PJSC</option>
+                                <option value="others">Others</option>
+                            </select>
+                        </div>
+
+                        <!-- Incorporation Details -->
+                        <div class="space-y-4">
+                            <h3 class="text-md font-medium text-gray-700">Incorporation Details</h3>
+                            
+                            <div>
+                                <label for="incorporation_country" class="block text-sm font-medium text-gray-700">Country of Incorporation</label>
+                                <input type="text" id="incorporation_country" name="incorporation_country" required
+                                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            </div>
+
+                            <div>
+                                <label for="incorporation_date" class="block text-sm font-medium text-gray-700">Date of Incorporation</label>
+                                <input type="date" id="incorporation_date" name="incorporation_date" required
+                                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            </div>
+
+                            <div>
+                                <label for="registration_number" class="block text-sm font-medium text-gray-700">Company Registration Number</label>
+                                <input type="text" id="registration_number" name="registration_number" required
+                                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            </div>
+
+                            <div>
+                                <label for="lei" class="block text-sm font-medium text-gray-700">Legal Entity Identifier (LEI)</label>
+                                <input type="text" id="lei" name="lei" required
+                                    hx-post="/validate/lei"
+                                    hx-trigger="change"
+                                    hx-target="next div"
+                                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                <div class="mt-1 text-sm"></div>
+                            </div>
+                        </div>
+
+                        <!-- Company Address -->
+                        <div class="space-y-4">
+                            <h3 class="text-md font-medium text-gray-700">Company Address</h3>
+                            
+                            <div>
+                                <label for="registered_office" class="block text-sm font-medium text-gray-700">Registered Office</label>
+                                <textarea id="registered_office" name="registered_office" required
+                                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></textarea>
+                            </div>
+
+                            <div>
+                                <label for="corporate_office" class="block text-sm font-medium text-gray-700">Corporate/Principal Office</label>
+                                <textarea id="corporate_office" name="corporate_office" required
+                                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></textarea>
+                            </div>
+
+                            <div>
+                                <label for="website" class="block text-sm font-medium text-gray-700">Company Website</label>
+                                <input type="url" id="website" name="website" required
+                                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            </div>
+                        </div>
+
+                        <!-- Operations -->
+                        <div>
+                            <label for="operations" class="block text-sm font-medium text-gray-700">Operations in countries other than those listed above</label>
+                            <textarea id="operations" name="operations"
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></textarea>
+                        </div>
+
+                        <!-- Group Description -->
+                        <div>
+                            <label for="group_description" class="block text-sm font-medium text-gray-700">Group Description</label>
+                            <textarea id="group_description" name="group_description" required
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="flex justify-between pt-6">
+                    <button type="button" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300">
+                        Back
+                    </button>
+                    <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
+                        Next Section
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Progress indicator -->
+    <div class="fixed bottom-0 left-0 right-0 bg-white shadow-lg p-4">
+        <div class="max-w-4xl mx-auto">
+            <div class="flex justify-between text-sm text-gray-600">
+                <span>Section A: Issuer Information</span>
+                <span>1 of 3</span>
+            </div>
+            <div class="mt-2 h-2 bg-gray-200 rounded-full">
+                <div class="h-2 bg-indigo-600 rounded-full" style="width: 33%"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

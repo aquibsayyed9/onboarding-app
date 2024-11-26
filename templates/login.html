@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Finstreet Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full space-y-8">
+            <div>
+                <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                    Sign in to Admin Portal
+                </h2>
+            </div>
+            <form id="loginForm" class="mt-8 space-y-6">
+                <div id="errorMessage" class="hidden rounded-md bg-red-50 p-4 text-sm text-red-700"></div>
+                
+                <div class="rounded-md shadow-sm -space-y-px">
+                    <div>
+                        <label for="username" class="sr-only">Username</label>
+                        <input id="username" name="username" type="text" required 
+                            class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" 
+                            placeholder="Username">
+                    </div>
+                    <div>
+                        <label for="password" class="sr-only">Password</label>
+                        <input id="password" name="password" type="password" required 
+                            class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" 
+                            placeholder="Password">
+                    </div>
+                </div>
+
+                <div>
+                    <button type="submit" id="submitButton"
+                        class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Sign in
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+    // Function to handle login
+    async function handleLogin(event) {
+        event.preventDefault();
+        
+        const submitButton = document.getElementById('submitButton');
+        const errorMessage = document.getElementById('errorMessage');
+        
+        submitButton.textContent = 'Signing in...';
+        submitButton.disabled = true;
+
+        try {
+            // Make login request
+            const response = await fetch('/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    username: document.getElementById('username').value,
+                    password: document.getElementById('password').value
+                })
+            });
+
+            const data = await response.json();
+            console.log('Login response:', data);
+
+            if (data.success && data.token) {
+                // Store token
+                localStorage.setItem('token', data.token);
+                
+                // Create form for POST request
+                const form = document.createElement('form');
+                form.method = 'GET';  // Changed to GET
+                form.action = '/admin/submissions';
+                
+                // Add token in header via meta tag
+                const meta = document.createElement('meta');
+                meta.httpEquiv = 'Authorization';
+                meta.content = `Bearer ${data.token}`;
+                document.head.appendChild(meta);
+
+                // Submit the form
+                document.body.appendChild(form);
+                form.submit();
+            } else {
+                throw new Error(data.error || 'Login failed');
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            errorMessage.textContent = error.message || 'An error occurred';
+            errorMessage.classList.remove('hidden');
+            submitButton.textContent = 'Sign in';
+            submitButton.disabled = false;
+        }
+    }
+
+    // Add form submit handler
+    document.getElementById('loginForm').addEventListener('submit', handleLogin);
+    </script>
+</body>
+</html>

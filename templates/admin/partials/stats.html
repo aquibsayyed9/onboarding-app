@@ -1,0 +1,40 @@
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <!-- Total Submissions -->
+    <div class="bg-white p-6 rounded-lg shadow">
+        <div class="text-gray-500 text-sm font-medium">Total Submissions</div>
+        <div class="mt-2 flex items-baseline">
+            <div class="text-2xl font-semibold text-gray-900">{{.Stats.Total}}</div>
+        </div>
+    </div>
+
+    <!-- Recent Submissions -->
+    <div class="bg-white p-6 rounded-lg shadow">
+        <div class="text-gray-500 text-sm font-medium">Last 24 Hours</div>
+        <div class="mt-2 flex items-baseline">
+            <div class="text-2xl font-semibold text-gray-900">{{.Stats.RecentCount}}</div>
+        </div>
+    </div>
+
+    <!-- Pending Submissions -->
+    <div class="bg-white p-6 rounded-lg shadow">
+        <div class="text-gray-500 text-sm font-medium">Pending Review</div>
+        <div class="mt-2 flex items-baseline">
+            <div class="text-2xl font-semibold text-indigo-600">{{.Stats.PendingCount}}</div>
+        </div>
+    </div>
+
+    <!-- Status Breakdown -->
+    <div class="bg-white p-6 rounded-lg shadow">
+        <div class="text-gray-500 text-sm font-medium">Status Breakdown</div>
+        <div class="mt-2 space-y-2">
+            {{range $status, $count := .Stats.StatusCounts}}
+            <div class="flex justify-between items-center">
+                <span class="text-sm text-gray-600 capitalize">{{$status}}</span>
+                <span class="text-sm font-medium {{if eq $status "approved"}}text-green-600{{else if eq $status "rejected"}}text-red-600{{else}}text-yellow-600{{end}}">
+                    {{$count}}
+                </span>
+            </div>
+            {{end}}
+        </div>
+    </div>
+</div>
